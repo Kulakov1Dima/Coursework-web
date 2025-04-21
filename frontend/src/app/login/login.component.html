@@ -1,0 +1,46 @@
+<div class="page-wrapper">
+  <div class="container">
+    <!-- Декоративная белая рамка -->
+    <div class="frame"></div>
+
+    <h1>Вход</h1>
+
+    <!-- Сообщение об ошибке -->
+    <div *ngIf="errorMessage" class="error-message">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Логин</label>
+        <input type="text" id="email" formControlName="email" placeholder="Введите ваш логин" />
+        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger">
+          <div *ngIf="loginForm.get('email')?.errors?.['required']">Логин обязателен</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" formControlName="password" placeholder="Введите ваш пароль" />
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
+          <div *ngIf="loginForm.get('password')?.errors?.['required']">Пароль обязателен</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn" [disabled]="loginForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Войти</span>
+        <span *ngIf="isLoading" class="spinner"></span>
+      </button>
+    </form>
+
+    <!-- Ссылка на регистрацию -->
+    <div class="register-link">
+      <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+    </div>
+  </div>
+</div>

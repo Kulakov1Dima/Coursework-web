@@ -1,0 +1,84 @@
+<div class="page-wrapper">
+  <div class="container" [ngClass]="{'container-shrunk': isUsersPanelOpen, 'container-hidden': isUsersPanelOpen}">
+    <div class="frame"></div>
+
+    <h1>{{ isOwnProfile ? 'Ваши чаты' : 'Публичные чаты пользователя ' + viewedUserLogin }}</h1>
+
+    <!-- Сообщение об ошибке -->
+    <div *ngIf="errorMessage" class="error-message">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div *ngIf="isLoading" class="loading">
+      <span class="spinner"></span>
+      <p>Загрузка...</p>
+    </div>
+
+    <!-- Список чатов -->
+    <div *ngIf="!isLoading && !errorMessage" class="chat-grid">
+      <div *ngFor="let chat of chats" class="chat-card" (click)="selectChat(chat)">
+        <h3>{{ chat.name }}</h3>
+        <p>Тип: {{ chat.type === 'PUBLIC' ? 'Публичный (виден всем)' : 'Приватный (только для вас и участников)' }}</p>
+        <button class="btn" (click)="$event.stopPropagation(); joinChat(chat.id)">Открыть чат</button>
+      </div>
+    </div>
+
+    <!-- Если чатов нет -->
+    <div *ngIf="!chats.length && !isLoading && !errorMessage" class="no-chats">
+      <p>{{ isOwnProfile ? 'У вас пока нет чатов.' : 'У пользователя нет публичных чатов.' }}</p>
+    </div>
+  </div>
+
+  <!-- Панель пользователей (только на своей странице) -->
+  <div *ngIf="isOwnProfile" class="users-panel" [ngClass]="{'users-panel-open': isUsersPanelOpen}">
+    <div class="frame"></div>
+
+    <div class="users-panel-header">
+      <h2>Пользователи чата</h2>
+      <button class="close-btn" (click)="closeUsersPanel()">✕</button>
+    </div>
+
+    <!-- Сообщение об ошибке -->
+    <div *ngIf="errorMessageUsers" class="error-message">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+      <span>{{ errorMessageUsers }}</span>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div *ngIf="isLoadingUsers" class="loading">
+      <span class="spinner"></span>
+      <p>Загрузка...</p>
+    </div>
+
+    <!-- Список пользователей -->
+    <div *ngIf="!isLoadingUsers && !errorMessageUsers" class="users-grid">
+      <div *ngFor="let user of chatUsers" class="user-card" (click)="goToUserProfile(user.login)">
+        <img [src]="user.photo" alt="User photo" class="user-photo" />
+        <div class="user-info">
+          <h3>{{ user.nickname }}</h3>
+          <p>{{ user.name }} {{ user.surname }}</p>
+          <p class="login">Логин: {{ user.login }}</p>
+        </div>
+        <button *ngIf="isOwnProfile" class="remove-btn" (click)="$event.stopPropagation(); removeUser(selectedChat!.id, user.id)">Удалить</button>
+      </div>
+    </div>
+
+    <!-- Кнопка "Добавить пользователя" -->
+    <button *ngIf="isOwnProfile && !isLoadingUsers && !errorMessageUsers" class="btn add-btn" (click)="addUser()">Добавить пользователя</button>
+
+    <!-- Если пользователей нет -->
+    <div *ngIf="!chatUsers.length && !isLoadingUsers && !errorMessageUsers" class="no-users">
+      <p>В чате нет пользователей.</p>
+    </div>
+  </div>
+</div>

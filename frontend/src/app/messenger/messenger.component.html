@@ -1,0 +1,66 @@
+<div class="chat-panel">
+    <div class="frame"></div>
+  
+    <div class="chat-panel-header">
+      <h2>{{ chatName }}</h2>
+      <button class="close-btn" [routerLink]="['/dashboard']">✕</button>
+    </div>
+  
+    <!-- Сообщение об ошибке -->
+    <div *ngIf="errorMessage" class="error-message">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 8v4"></path>
+        <path d="M12 16h.01"></path>
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+  
+    <!-- Список элементов чата -->
+    <div class="chat-items">
+      <div *ngFor="let item of chatItems" class="chat-item">
+        <div class="item-header">
+          <span class="user-nickname">{{ item.user.nickname }} ({{ item.user.login }})</span>
+          <span class="item-date">{{ item.date }}</span>
+        </div>
+        <div *ngIf="item.type === 'MESSAGE'" class="message-item">
+          <p>{{ item.message?.messageText }}</p>
+        </div>
+        <div *ngIf="item.type === 'POST'" class="post-item">
+          <p class="post-content">{{ item.post?.messageText }}</p>
+          <div class="comments">
+            <h4>Комментарии:</h4>
+            <div *ngFor="let comment of item.post?.comments" class="comment">
+              <span class="comment-user">{{ comment.user.nickname }} ({{ comment.user.login }}):</span>
+              <span class="comment-text">{{ comment.textContent }}</span>
+            </div>
+            <div *ngIf="item.post && item.post.comments && !item.post.comments.length" class="no-comments">
+              <p>Нет комментариев.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Поле ввода сообщения -->
+    <div class="chat-input">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        placeholder="Введите сообщение..."
+        (keyup.enter)="sendMessage()"
+      />
+      <button class="btn" (click)="sendMessage()">Отправить</button>
+    </div>
+  
+    <!-- Поле для создания поста -->
+    <div class="post-input">
+      <input
+        type="text"
+        [(ngModel)]="newPost"
+        placeholder="Создать пост..."
+        (keyup.enter)="createPost()"
+      />
+      <button class="btn" (click)="createPost()">Опубликовать пост</button>
+    </div>
+  </div>

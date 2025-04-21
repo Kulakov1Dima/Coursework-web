@@ -1,0 +1,375 @@
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #000000;
+  position: relative;
+  padding: 40px; /* Отступы от краёв страницы */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.container {
+  flex: 1;
+  padding: 40px;
+  background: #1a1a1a;
+  position: relative;
+  z-index: 1;
+  transition: width 0.3s ease;
+  width: 100%;
+  height: calc(95vh); /* Фиксированная высота с учётом отступов */
+  box-sizing: border-box;
+  border-radius: 22px;
+}
+
+.container-shrunk {
+  width: 70%; /* Сужаем плашку чатов */
+}
+
+.frame {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #F5F5F5;
+  border-radius: 22px;
+  z-index: -1;
+  box-shadow: 0 0 15px rgba(245, 245, 245, 0.2);
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(0, 179, 134, 0.1) 0%, transparent 70%);
+  opacity: 0.2;
+  z-index: -1;
+  border-radius: 20px;
+}
+
+h1 {
+  color: #F5F5F5;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.chat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  max-height: calc(100% - 100px); /* Учитываем заголовок и отступы */
+  overflow-y: auto; /* Скроллинг внутри плашки чатов */
+  padding-top: 10px; /* Добавляем пространство сверху, чтобы плитки не обрезались при наведении */
+}
+
+.chat-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-grid::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 10px;
+}
+
+.chat-grid::-webkit-scrollbar-thumb {
+  background: #00B386;
+  border-radius: 10px;
+}
+
+.chat-grid::-webkit-scrollbar-thumb:hover {
+  background: #00A377;
+}
+
+.chat-card {
+  background: #333333;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.chat-card:hover {
+  transform: translateY(-5px);
+}
+
+.chat-card h3 {
+  color: #F5F5F5;
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.chat-card p {
+  color: #D3D3D3;
+  margin: 0 0 10px 0;
+  font-size: 12px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 15px;
+  background: #F5F5F5;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn:hover {
+  background: #F5F5F5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  color: #00B386;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2a0000;
+  color: #ff0000;
+  padding: 12px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  text-align: center;
+}
+
+.error-message svg {
+  flex-shrink: 0;
+}
+
+.loading {
+  text-align: center;
+  color: #D3D3D3;
+  margin-bottom: 20px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #F5F5F5;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.no-chats {
+  text-align: center;
+  color: #D3D3D3;
+  font-size: 16px;
+}
+
+/* Панель пользователей */
+.users-panel {
+  width: 0;
+  background: #1a1a1a;
+  transition: width 0.3s ease;
+  position: relative;
+  height: calc(91,6vh); /* Такая же высота, как у .container */
+  z-index: 2;
+  padding: 0;
+  border-radius: 22px;
+  margin-left: 20px; /* Отступ между плашкой чатов и панелью пользователей */
+  visibility: hidden; /* Скрываем панель в свёрнутом режиме */
+}
+
+.users-panel-open {
+  width: 30%;
+  padding: 20px;
+  visibility: visible; /* Показываем панель в открытом режиме */
+}
+
+.users-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(0, 179, 134, 0.1) 0%, transparent 70%);
+  opacity: 0.2;
+  z-index: -1;
+  border-radius: 20px;
+}
+
+.users-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.users-panel-header h2 {
+  color: #F5F5F5;
+  font-size: 20px;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #F5F5F5;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #00B386;
+}
+
+.users-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: calc(100% - 120px); /* Учитываем заголовок, кнопку "Добавить" и отступы */
+  overflow-y: auto; /* Скроллинг внутри панели пользователей */
+  padding-right: 10px;
+  padding-top: 40px; /* Добавляем пространство сверху для user-card:hover */
+}
+
+.users-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.users-grid::-webkit-scrollbar-track {
+  background: #2a2a2a;
+  border-radius: 10px;
+}
+
+.users-grid::-webkit-scrollbar-thumb {
+  background: #00B386;
+  border-radius: 10px;
+}
+
+.users-grid::-webkit-scrollbar-thumb:hover {
+  background: #00A377;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  background: #333333;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+}
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info h3 {
+  color: #F5F5F5;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.user-info p {
+  color: #D3D3D3;
+  margin: 0;
+  font-size: 12px;
+}
+
+.user-info .login {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.remove-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 10px;
+  background: #8B0000;
+  color: #F5F5F5;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.remove-btn:hover {
+  background: #cc0000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.add-btn {
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.no-users {
+  text-align: center;
+  color: #D3D3D3;
+  font-size: 14px;
+}
+
+/* Медиа-запрос для узких экранов (телефонов) */
+@media (max-width: 768px) {
+  .page-wrapper {
+    flex-direction: column;
+  }
+
+  .container {
+    width: 100%;
+  }
+
+  .container-shrunk {
+    width: 100%; /* Не сужаем на узких экранах */
+  }
+
+  .container-hidden {
+    display: none; /* Скрываем чаты, когда открыта панель пользователей */
+  }
+
+  .users-panel {
+    margin-left: 0; /* Убираем отступ */
+    height: calc(100vh - 80px); /* Фиксированная высота */
+  }
+
+  .users-panel-open {
+    width: 100%; /* Панель занимает всю ширину на узких экранах */
+    padding: 20px;
+    visibility: visible;
+  }
+}
