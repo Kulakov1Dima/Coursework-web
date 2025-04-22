@@ -88,7 +88,6 @@ public class ItemService {
         ItemDTO itemDTO = itemMapper.toDto(savedItem);
         itemDTO.setMessage(messageMapper.toDto(savedMessage));
 
-        // Отправляем ItemDTO через WebSocket
         messagingTemplate.convertAndSend("/topic/chat/" + chatId, itemDTO);
 
         return new ResponseEntity<>(itemDTO, HttpStatus.CREATED);
@@ -127,7 +126,6 @@ public class ItemService {
         ItemDTO itemDTO = itemMapper.toDto(savedItem);
         itemDTO.setPost(postMapper.toDto(savedPost));
 
-        // Отправляем ItemDTO через WebSocket
         messagingTemplate.convertAndSend("/topic/chat/" + chatId, itemDTO);
 
         return new ResponseEntity<>(itemDTO, HttpStatus.CREATED);

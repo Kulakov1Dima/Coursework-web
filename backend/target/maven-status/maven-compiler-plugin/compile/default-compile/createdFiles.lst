@@ -1,8 +1,8 @@
+com/example/chat_app/repository/UserInChatRepository.class
 com/example/chat_app/mapper/CommentMapperImpl.class
 com/example/chat_app/mapper/PostMapper.class
-com/example/chat_app/repository/UserInChatRepository.class
-com/example/chat_app/service/ItemService.class
 com/example/chat_app/repository/ChatRepository.class
+com/example/chat_app/service/ItemService.class
 com/example/chat_app/config/CorsConfig.class
 com/example/chat_app/dto/PostDTO.class
 com/example/chat_app/service/ChatService.class
@@ -17,8 +17,8 @@ com/example/chat_app/dto/MessageDTO.class
 com/example/chat_app/entities/Item.class
 com/example/chat_app/dto/UserDTO.class
 com/example/chat_app/dto/UserInChatDTO.class
-com/example/chat_app/ChatAppApplication.class
 com/example/chat_app/dto/ChatDTO.class
+com/example/chat_app/ChatAppApplication.class
 com/example/chat_app/mapper/ChatMapperImpl.class
 com/example/chat_app/controller/ChatController.class
 com/example/chat_app/mapper/UserInChatMapperImpl.class
@@ -39,8 +39,8 @@ com/example/chat_app/mapper/ChatMapper.class
 com/example/chat_app/mapper/MessageMapperImpl.class
 com/example/chat_app/mapper/PostMapperImpl.class
 com/example/chat_app/entities/Chat.class
-com/example/chat_app/mapper/ItemMapper.class
 com/example/chat_app/repository/PostRepository.class
+com/example/chat_app/mapper/ItemMapper.class
 com/example/chat_app/repository/MessageRepository.class
 com/example/chat_app/dto/ItemDTO.class
 com/example/chat_app/mapper/CommentMapper.class

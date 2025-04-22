@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Client, IMessage } from '@stomp/stompjs';
-
-declare const SockJS: any;
+import SockJS from 'sockjs-client';
 
 interface ItemDTO {
   id: number;
@@ -27,7 +26,7 @@ interface CommentDTO {
   providedIn: 'root'
 })
 export class ItemService {
-  private apiUrl = 'http://192.168.1.115:8081/api/items';
+  private apiUrl = 'http://localhost:8081/api/items';
   private stompClient: Client | null = null;
 
   constructor(private http: HttpClient) {}
@@ -72,7 +71,7 @@ export class ItemService {
       this.disconnectWebSocket();
     }
 
-    const socket = new SockJS('http://192.168.1.115:8081/ws');
+    const socket = new SockJS('http://localhost:8081/ws');
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,

@@ -12,7 +12,7 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "userInChats", ignore = true)
-    @Mapping(target = "items", ignore = true) // Игнорируем поле items, чтобы избежать рекурсии
+    @Mapping(target = "items", ignore = true)
     @Mapping(target = "comments", ignore = true) // Игнорируем поле comments, если оно есть
     UserDTO toDto(User user);
 

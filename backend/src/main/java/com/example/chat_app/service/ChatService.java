@@ -147,9 +147,10 @@ public class ChatService {
 
         List<UserInChat> userInChats = userInChatRepository.findByUserId(userId);
         List<ChatDTO> chatDTOs = userInChats.stream()
-                .map(UserInChat::getChat)
-                .map(chat -> chatMapper.toDto(chat))
-                .collect(Collectors.toList());
+            .map(UserInChat::getChat)
+            .distinct()
+            .map(chat -> chatMapper.toDto(chat))
+            .collect(Collectors.toList());
         
         return new ResponseEntity<>(chatDTOs, HttpStatus.OK);
     }
@@ -186,7 +187,7 @@ public class ChatService {
         chat.setName(newName);
         Chat updatedChat = chatRepository.save(chat);
         ChatDTO updatedChatDTO = chatMapper.toDto(updatedChat);
-        // Вручную мапим userInChats
+
         updatedChatDTO.setUserInChats(userInChatRepository.findByChatId(updatedChat.getId())
                 .stream()
                 .map(userInChatMapper::toDto)

@@ -1,11 +1,11 @@
 .chat-panel {
   width: 100%;
-  max-width: 1200px; /* Ограничиваем максимальную ширину для больших экранов */
-  margin: 40px auto; /* Добавляем отступы от краёв страницы: 40px сверху/снизу, auto слева/справа (центрирование) */
+  max-width: 1200px;
+  margin: 40px auto;
   padding: 40px;
   background: #1a1a1a;
   position: relative;
-  height: calc(100vh - 160px); /* Учитываем отступы (40px сверху + 40px снизу = 80px, плюс padding 40px*2) */
+  height: calc(100vh - 160px);
   box-sizing: border-box;
   border-radius: 22px;
 }
