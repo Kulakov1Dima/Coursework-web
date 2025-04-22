@@ -42,5 +42,5 @@ Thumbs.db
 
 target
 src/
-node_modules
+node_modules/
 frontend/angular/cache
