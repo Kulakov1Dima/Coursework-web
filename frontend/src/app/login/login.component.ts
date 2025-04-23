@@ -25,6 +25,12 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Проверка, если пользователь уже аутентифицирован
+    const savedLogin = localStorage.getItem('login');
+    if (savedLogin) {
+      this.router.navigate(['/dashboard']);
+    }
+
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -34,6 +40,7 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginForm.invalid) {
       this.errorMessage = 'Пожалуйста, заполните форму корректно';
+      this.loginForm.markAllAsTouched();
       return;
     }
 
@@ -42,6 +49,7 @@ export class LoginComponent implements OnInit {
 
     const email = this.loginForm.value.email;
     const password = this.loginForm.value.password;
+    console.log('Attempting login for:', email);
 
     this.authService.login(email, password).subscribe({
       next: (response) => {
@@ -52,8 +60,14 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Ошибка входа. Проверьте логин и пароль.';
         console.error('Login error:', err);
+        if (err.status === 401) {
+          this.errorMessage = 'Неверный логин или пароль';
+        } else {
+          this.errorMessage = err.error?.message || 'Ошибка входа. Попробуйте снова.';
+        }
+        // Очищаем учетные данные при ошибке
+        this.authService.logout();
       }
     });
   }

@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { UserService } from './services/user.service';
 import { Router, Routes } from '@angular/router';
 import { inject } from '@angular/core';
+import { RegisterComponent } from './register/register.component';
 
 const authGuard = () => {
   const userService = inject(UserService);
@@ -27,5 +28,6 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'dashboard/:login', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'messenger/:chatId', component: MessengerComponent, canActivate: [authGuard] },
+  { path: 'register', component: RegisterComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

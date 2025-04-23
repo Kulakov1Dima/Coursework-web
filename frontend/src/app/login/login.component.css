@@ -3,9 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #000000;
-  position: relative;
-  overflow: hidden;
+  background: transparent;
 }
 
 .container {
@@ -26,10 +24,10 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  border: 2px solid #F5F5F5; /* Мягкий белый */
+  border: none;
   border-radius: 22px;
   z-index: -1;
-  box-shadow: 0 0 15px rgba(245, 245, 245, 0.2);
+  box-shadow: 0 0 1px rgba(32, 32, 32, 0.2);
 }
 
 .container::before {
@@ -47,7 +45,7 @@
 
 /* Заголовок */
 h1 {
-  color: #F5F5F5;
+  color: #ccc;
   text-align: center;
   margin-bottom: 40px;
   font-size: 28px;
@@ -69,7 +67,7 @@ h1 {
 label {
   display: block;
   margin-bottom: 10px;
-  color: #D3D3D3; /* Светлый серый */
+  color: #ccc;
   font-weight: 500;
   font-size: 14px;
   text-transform: uppercase;
@@ -79,28 +77,26 @@ label {
 
 /* Поля ввода */
 input {
-  width: 100%;
-  max-width: 100%;
-  padding: 14px 20px;
-  border: 1px solid #F5F5F5;
+  width: 92%;
+  max-width: 92%;
+  padding: 15px 20px;
+  border: none;
   border-radius: 15px;
-  background: #333333; /* Тёмный серый */
-  color: #F5F5F5;
+  background: #ffffff;
+  color: #000000;
   font-size: 16px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 input:focus {
   outline: none;
   border-color: #00B386;
-  box-shadow: 0 0 10px rgba(0, 179, 134, 0.5);
-  background: #3a3a3a;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  background: #ffffffc0;
 }
 
 /* Плейсхолдеры */
 input::placeholder {
-  color: #D3D3D3;
+  color: #00000096;
   opacity: 0.8;
 }
 
@@ -188,14 +184,14 @@ input::placeholder {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #2a0000;
+  background: #310000f3;
   color: #ff0000;
-  padding: 12px;
+  padding: 15px;
   border-radius: 15px;
   margin-bottom: 20px;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  width: 100%;
+  width: 95%;
   text-align: center;
 }
 

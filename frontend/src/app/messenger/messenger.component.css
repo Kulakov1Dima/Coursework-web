@@ -1,13 +1,21 @@
 .chat-panel {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1700px;
   margin: 40px auto;
   padding: 40px;
   background: #1a1a1a;
   position: relative;
-  height: calc(100vh - 160px);
+  height: calc(100vh - 80px);
   box-sizing: border-box;
   border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-items {
+  max-height: 400px; /* Или другая высота, подходящая для вашего дизайна */
+  overflow-y: auto; /* Включаем вертикальную прокрутку */
+  padding: 10px;
 }
 
 .chat-panel::before {
@@ -17,7 +25,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(0, 179, 134, 0.1) 0%, transparent 70%);
   opacity: 0.2;
   z-index: -1;
   border-radius: 20px;
@@ -25,10 +32,7 @@
 
 .frame {
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  inset: 10px;
   border: 2px solid #F5F5F5;
   border-radius: 22px;
   z-index: -1;
@@ -48,11 +52,6 @@
   margin: 0;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 10px;
-}
-
 .close-btn {
   background: none;
   border: none;
@@ -66,29 +65,12 @@
   color: #00B386;
 }
 
-.logout-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 15px;
-  background: #8B0000;
-  color: #F5F5F5;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.logout-btn:hover {
-  background: #cc0000;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-}
-
 .chat-items {
-  max-height: calc(100% - 200px);
+  flex: 1;
+  max-height: calc(100% - 140px);
   overflow-y: auto;
   padding-right: 10px;
+  margin-bottom: 20px;
 }
 
 .chat-items::-webkit-scrollbar {
@@ -110,35 +92,95 @@
 }
 
 .chat-item {
-  background: #333333;
-  padding: 15px;
-  border-radius: 15px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
 }
 
-.item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+.chat-item.message-own {
+  align-items: flex-end;
+}
+
+.chat-item.message-other {
+  align-items: flex-start;
+}
+
+.date-divider {
+  text-align: center;
+  color: #D3D3D3;
+  font-size: 12px;
+  margin: 10px 0;
+  padding: 5px;
+  background: #2a2a2a;
+  border-radius: 10px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.message-header {
+  border-radius: 10px;
+  margin-bottom:1px;
+  align-self: flex-start;
 }
 
 .user-nickname {
-  color: #F5F5F5;
+  color: #00B386;
   font-size: 14px;
   font-weight: 600;
 }
 
+.message-item {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 15px;
+  margin: 5px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-item.own {
+  background: #F5F5F5;
+}
+
+.message-item.other {
+  background: #4A4A4A;
+}
+
+.message-item.own p {
+  margin: 0;
+  font-size: 14px;
+  color: #000000;
+}
+
+.message-item.other p {
+  margin: 0;
+  font-size: 14px;
+  color: #FFFFFF; /* Белый текст для чужих сообщений */
+}
+
+.message-item.own .item-date {
+  color: #D3D3D3; /* Серое время для своих сообщений */
+}
+
+.message-item.other .item-date {
+  color: #00B386; /* Зелёное время для чужих сообщений */
+}
+
 .item-date {
-  color: #D3D3D3;
   font-size: 12px;
 }
 
-.message-item p {
-  color: #F5F5F5;
-  margin: 0;
-  font-size: 14px;
+.post-item {
+  background: #333333;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.post-item .item-header {
+  max-width: none;
+  background: none;
 }
 
 .post-item .post-content {
@@ -183,7 +225,11 @@
 .chat-input {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  background: #1a1a1a;
+  padding-top: 10px;
+  z-index: 1;
 }
 
 .chat-input input {
@@ -203,7 +249,11 @@
 .post-input {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  position: sticky;
+  bottom: 0;
+  background: #1a1a1a;
+  padding-top: 10px;
+  z-index: 1;
 }
 
 .post-input input {
@@ -221,9 +271,8 @@
 }
 
 .btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
+  width: auto;
+  padding: 10px 20px;
   border: none;
   border-radius: 15px;
   background: #F5F5F5;
@@ -253,18 +302,34 @@
   margin-bottom: 20px;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  text-align: center;
 }
 
 .error-message svg {
   flex-shrink: 0;
 }
 
-/* Адаптивность для маленьких экранов */
 @media (max-width: 768px) {
   .chat-panel {
-    margin: 20px; /* Уменьшаем отступы для мобильных устройств */
-    height: calc(100vh - 80px); /* Учитываем меньшие отступы */
+    margin: 20px;
+    height: calc(100vh - 80px);
+  }
+  .frame {
+    inset: 5px;
+  }
+  .message-item {
+    max-width: 80%;
+  }
+  .message-header {
+    max-width: 80%;
+  }
+  .date-divider {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  .message-footer {
+    padding: 2px 6px;
+  }
+  .item-date {
+    font-size: 11px;
   }
 }

@@ -22,7 +22,36 @@
 
     <!-- Список чатов -->
     <div *ngIf="!isLoading && !errorMessage" class="chat-grid">
-      <div *ngFor="let chat of chats" class="chat-card" (click)="selectChat(chat)">
+      <!-- Плитка для создания чата -->
+      <div *ngIf="isOwnProfile && isCreatingChat" class="chat-card create-chat-card">
+        <div class="create-chat-form">
+          <input
+            type="text"
+            [(ngModel)]="newChatName"
+            placeholder="Название чата"
+            class="chat-name-input"
+          />
+          <select [(ngModel)]="newChatType" class="chat-type-select">
+            <option value="PUBLIC">Публичный</option>
+            <option value="PRIVATE">Приватный</option>
+          </select>
+          <div class="create-chat-buttons">
+            <button class="btn create-btn" (click)="createChat()">Создать</button>
+            <button class="btn cancel-btn" (click)="cancelCreateChat()">Отмена</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Существующие чаты -->
+      <div *ngFor="let chat of chats; trackBy: trackByChatId" class="chat-card" (click)="selectChat(chat)">
+        <button
+          *ngIf="isOwnProfile"
+          class="delete-chat-btn"
+          (click)="$event.stopPropagation(); deleteChat(chat.id)"
+          title="Удалить чат"
+        >
+          ✕
+        </button>
         <h3>{{ chat.name }}</h3>
         <p>Тип: {{ chat.type === 'PUBLIC' ? 'Публичный (виден всем)' : 'Приватный (только для вас и участников)' }}</p>
         <button class="btn" (click)="$event.stopPropagation(); joinChat(chat.id)">Открыть чат</button>
@@ -30,8 +59,13 @@
     </div>
 
     <!-- Если чатов нет -->
-    <div *ngIf="!chats.length && !isLoading && !errorMessage" class="no-chats">
+    <div *ngIf="!chats.length && !isLoading && !errorMessage && !isCreatingChat" class="no-chats">
       <p>{{ isOwnProfile ? 'У вас пока нет чатов.' : 'У пользователя нет публичных чатов.' }}</p>
+    </div>
+
+    <!-- Кнопка для начала создания чата -->
+    <div *ngIf="isOwnProfile && !isCreatingChat" class="new-chat-button">
+      <button class="btn new-chat-btn" (click)="startNewChat()">+ Начать новый чат</button>
     </div>
   </div>
 
@@ -40,7 +74,7 @@
     <div class="frame"></div>
 
     <div class="users-panel-header">
-      <h2>Пользователи чата</h2>
+      <h2>{{ isAddingUsersMode ? 'Все пользователи' : 'Пользователи чата' }}</h2>
       <button class="close-btn" (click)="closeUsersPanel()">✕</button>
     </div>
 
@@ -62,23 +96,55 @@
 
     <!-- Список пользователей -->
     <div *ngIf="!isLoadingUsers && !errorMessageUsers" class="users-grid">
-      <div *ngFor="let user of chatUsers" class="user-card" (click)="goToUserProfile(user.login)">
-        <img [src]="user.photo" alt="User photo" class="user-photo" />
-        <div class="user-info">
-          <h3>{{ user.nickname }}</h3>
-          <p>{{ user.name }} {{ user.surname }}</p>
-          <p class="login">Логин: {{ user.login }}</p>
+      <ng-container *ngIf="isAddingUsersMode; else chatUsersList">
+        <div *ngFor="let user of allUsers" class="user-card" (click)="goToUserProfile(user.login)">
+          <img [src]="user.photo" alt="User photo" class="user-photo" />
+          <div class="user-info">
+            <h3>{{ user.nickname }}</h3>
+            <p>{{ user.name }} {{ user.surname }}</p>
+            <p class="login">Логин: {{ user.login }}</p>
+          </div>
+          <button
+            *ngIf="isOwnProfile"
+            class="btn"
+            [ngClass]="{'remove-btn': user.isInChat, 'add-btn': !user.isInChat}"
+            (click)="$event.stopPropagation(); toggleUserInChat(user.id)"
+          >
+            {{ user.isInChat ? 'Удалить' : 'Добавить' }}
+          </button>
         </div>
-        <button *ngIf="isOwnProfile" class="remove-btn" (click)="$event.stopPropagation(); removeUser(selectedChat!.id, user.id)">Удалить</button>
-      </div>
+      </ng-container>
+      <ng-template #chatUsersList>
+        <div *ngFor="let user of chatUsers" class="user-card" (click)="goToUserProfile(user.login)">
+          <img [src]="user.photo" alt="User photo" class="user-photo" />
+          <div class="user-info">
+            <h3>{{ user.nickname }}</h3>
+            <p>{{ user.name }} {{ user.surname }}</p>
+            <p class="login">Логин: {{ user.login }}</p>
+          </div>
+          <button
+            *ngIf="isOwnProfile"
+            class="remove-btn"
+            (click)="$event.stopPropagation(); removeUser(selectedChat!.id, user.id)"
+          >
+            Удалить
+          </button>
+        </div>
+      </ng-template>
     </div>
 
-    <!-- Кнопка "Добавить пользователя" -->
-    <button *ngIf="isOwnProfile && !isLoadingUsers && !errorMessageUsers" class="btn add-btn" (click)="addUser()">Добавить пользователя</button>
+    <!-- Кнопка управления -->
+    <button
+      *ngIf="isOwnProfile && !isLoadingUsers && !errorMessageUsers"
+      class="manage-btn"
+      (click)="isAddingUsersMode ? returnToChatUsers() : addUser()"
+    >
+      {{ isAddingUsersMode ? 'Вернуться к пользователям чата' : 'Добавить пользователя' }}
+    </button>
 
     <!-- Если пользователей нет -->
-    <div *ngIf="!chatUsers.length && !isLoadingUsers && !errorMessageUsers" class="no-users">
-      <p>В чате нет пользователей.</p>
+    <div *ngIf="!isLoadingUsers && !errorMessageUsers && ((isAddingUsersMode && !allUsers.length) || (!isAddingUsersMode && !chatUsers.length))" class="no-users">
+      <p>{{ isAddingUsersMode ? 'Нет доступных пользователей.' : 'В чате нет пользователей.' }}</p>
     </div>
   </div>
 </div>

@@ -4,29 +4,15 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { environment } from '../environments/environment';
+import { ItemDTO } from '../repositories/item.model';
 
-interface ItemDTO {
-  id: number;
-  chat: any;
-  user: { id: number; login: string; photo: string; nickname: string; surname: string; name: string };
-  type: 'MESSAGE' | 'POST';
-  date: string;
-  message: { id: number; messageText: string; item: any } | null;
-  post: { id: number; messageText: string; item: any; comments: CommentDTO[] } | null;
-}
-
-interface CommentDTO {
-  id: number;
-  post: any;
-  user: { id: number; login: string; photo: string; nickname: string; surname: string; name: string };
-  textContent: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemService {
-  private apiUrl = 'http://localhost:8081/api/items';
+  private apiUrl = `${environment.baseUrl}/items`;
   private stompClient: Client | null = null;
 
   constructor(private http: HttpClient) {}
@@ -71,7 +57,7 @@ export class ItemService {
       this.disconnectWebSocket();
     }
 
-    const socket = new SockJS('http://localhost:8081/ws');
+    const socket = new SockJS(`${environment.wsURL}/ws`);
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,

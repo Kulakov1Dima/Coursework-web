@@ -1,14 +1,14 @@
-/* Тёмная тема для всего проекта */
 body {
   margin: 0;
-  background: #000000;
+  background: #ffffff;
   color: #D3D3D3;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow: hidden
 }
 
-/* Стили для ссылок */
 a {
   color: #00B386;
   text-decoration: none;
@@ -19,7 +19,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Остальные элементы */
 h2, h3, h4, h5, h6 {
   color: #F5F5F5;
 }

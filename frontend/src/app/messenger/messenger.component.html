@@ -1,30 +1,44 @@
 <div class="chat-panel">
-    <div class="frame"></div>
-  
-    <div class="chat-panel-header">
-      <h2>{{ chatName }}</h2>
-      <button class="close-btn" [routerLink]="['/dashboard']">✕</button>
-    </div>
-  
-    <div *ngIf="errorMessage" class="error-message">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <path d="M12 8v4"></path>
-        <path d="M12 16h.01"></path>
-      </svg>
-      <span>{{ errorMessage }}</span>
-    </div>
-  
-    <div class="chat-items">
-      <div *ngFor="let item of chatItems" class="chat-item">
-        <div class="item-header">
-          <span class="user-nickname">{{ item.user.nickname }} ({{ item.user.login }})</span>
-          <span class="item-date">{{ item.date }}</span>
-        </div>
-        <div *ngIf="item.type === 'MESSAGE'" class="message-item">
+  <div class="frame"></div>
+
+  <div class="chat-panel-header">
+    <h2>{{ chatName }}</h2>
+    <button class="close-btn" [routerLink]="['/dashboard']">✕</button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M12 8v4"></path>
+      <path d="M12 16h.01"></path>
+    </svg>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div class="chat-items" #chatContainer>
+    <ng-container *ngFor="let item of chatItems; let i = index">
+      <!-- Показываем дату, если она отличается от предыдущей -->
+      <div *ngIf="i === 0 || getDate(item.date) !== getDate(chatItems[i - 1].date)" class="date-divider">
+        {{ formatDate(item.date) }}
+      </div>
+      <div class="chat-item" [ngClass]="{
+        'message-own': item.type === 'MESSAGE' && item.user.id === currentUserId,
+        'message-other': item.type === 'MESSAGE' && item.user.id !== currentUserId
+      }">
+        <div *ngIf="item.type === 'MESSAGE'" class="message-item" [ngClass]="{
+          'own': item.user.id === currentUserId,
+          'other': item.user.id !== currentUserId
+        }">
+          <!-- Имя для чужих сообщений -->
+          <div class="message-header" *ngIf="item.user.id !== currentUserId">
+            <span class="user-nickname">{{ item.user.nickname }} ({{ item.user.login }})</span>
+          </div>
           <p>{{ item.message?.messageText }}</p>
         </div>
-        <div *ngIf="item.type === 'POST'" class="post-item">
+        <div *ngIf="item.type === 'POST' && !isPrivateChat" class="post-item">
+          <div class="item-header">
+            <span class="user-nickname">{{ item.user.nickname }} ({{ item.user.login }})</span>
+          </div>
           <p class="post-content">{{ item.post?.messageText }}</p>
           <div class="comments">
             <h4>Комментарии:</h4>
@@ -38,26 +52,26 @@
           </div>
         </div>
       </div>
-    </div>
-  
-    <div class="chat-input">
-      <input
-        type="text"
-        [(ngModel)]="newMessage"
-        placeholder="Введите сообщение..."
-        (keyup.enter)="sendMessage()"
-      />
-      <button class="btn" (click)="sendMessage()">Отправить</button>
-    </div>
-  
-    <!-- Поле для создания поста -->
-    <div class="post-input">
-      <input
-        type="text"
-        [(ngModel)]="newPost"
-        placeholder="Создать пост..."
-        (keyup.enter)="createPost()"
-      />
-      <button class="btn" (click)="createPost()">Опубликовать пост</button>
-    </div>
+    </ng-container>
   </div>
+
+  <div class="chat-input">
+    <input
+      type="text"
+      [(ngModel)]="newMessage"
+      placeholder="Введите сообщение..."
+      (keyup.enter)="sendMessage()"
+    />
+    <button class="btn" (click)="sendMessage()">Отправить</button>
+  </div>
+
+  <div class="post-input" *ngIf="!isPrivateChat">
+    <input
+      type="text"
+      [(ngModel)]="newPost"
+      placeholder="Создать пост..."
+      (keyup.enter)="createPost()"
+    />
+    <button class="btn" (click)="createPost()">Опубликовать пост</button>
+  </div>
+</div>

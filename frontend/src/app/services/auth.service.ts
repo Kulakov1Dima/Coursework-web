@@ -1,20 +1,30 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
+import { UserDTO } from './user.service';
+import { BasicAuthInterceptor } from '../interceptors/basic-auth.interceptor';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/users/login/`;
+  private apiUrl = `${environment.baseUrl}/api/users`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authInterceptor: BasicAuthInterceptor
+  ) {}
 
-  login(username: string, password: string): Observable<any> {
-    const params = new HttpParams().set('password', password);
-    const url = `${this.apiUrl}${username}`;
-    //return this.http.get(url, { params });
-    return this.http.get(url);
+  login(username: string, password: string): Observable<UserDTO> {
+    // Сохраняем учетные данные в интерцепторе
+    this.authInterceptor.setCredentials(username, password);
+    // Проверяем аутентификацию через защищенный эндпоинт
+    return this.http.get<UserDTO>(`${this.apiUrl}/me`);
+  }
+
+  logout() {
+    // Очищаем учетные данные
+    this.authInterceptor.clearCredentials();
   }
 }

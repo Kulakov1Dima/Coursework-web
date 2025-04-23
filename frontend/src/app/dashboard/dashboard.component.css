@@ -1,9 +1,9 @@
 .page-wrapper {
   display: flex;
   min-height: 100vh;
-  background: #000000;
+  background: transparent;
   position: relative;
-  padding: 40px; /* Отступы от краёв страницы */
+  padding: 40px; 
   box-sizing: border-box;
   width: 100%;
 }
@@ -16,13 +16,13 @@
   z-index: 1;
   transition: width 0.3s ease;
   width: 100%;
-  height: calc(95vh); /* Фиксированная высота с учётом отступов */
+  height: calc(95vh);
   box-sizing: border-box;
   border-radius: 22px;
 }
 
 .container-shrunk {
-  width: 70%; /* Сужаем плашку чатов */
+  width: 70%;
 }
 
 .frame {
@@ -44,7 +44,6 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(0, 179, 134, 0.1) 0%, transparent 70%);
   opacity: 0.2;
   z-index: -1;
   border-radius: 20px;
@@ -64,9 +63,9 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-  max-height: calc(100% - 100px); /* Учитываем заголовок и отступы */
-  overflow-y: auto; /* Скроллинг внутри плашки чатов */
-  padding-top: 10px; /* Добавляем пространство сверху, чтобы плитки не обрезались при наведении */
+  max-height: calc(100% - 100px);
+  overflow-y: auto;
+  padding-top: 10px;
 }
 
 .chat-grid::-webkit-scrollbar {
@@ -88,12 +87,14 @@ h1 {
 }
 
 .chat-card {
-  background: #333333;
+  background: #ffffff;
   padding: 15px;
   border-radius: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
   cursor: pointer;
+  vertical-align: top;
+  position: relative;
 }
 
 .chat-card:hover {
@@ -101,15 +102,98 @@ h1 {
 }
 
 .chat-card h3 {
-  color: #F5F5F5;
+  color: #000000;
   margin: 0 0 8px 0;
   font-size: 18px;
 }
 
 .chat-card p {
-  color: #D3D3D3;
+  color: #3f3f3f;
   margin: 0 0 10px 0;
   font-size: 12px;
+}
+
+.delete-chat-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #cc0000;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.delete-chat-btn:hover {
+  color: #ff3333;
+}
+
+.create-chat-card {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.create-chat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-name-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.chat-type-select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.create-chat-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.create-btn {
+  background: #00B386;
+}
+
+.create-btn:hover {
+  background: #00A377;
+}
+
+.cancel-btn {
+  background: #cc0000;
+}
+
+.cancel-btn:hover {
+  background: #ff3333;
+}
+
+.new-chat-button {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.new-chat-btn {
+  padding: 15px;
+  font-size: 16px;
+  background: #00B386;
+  border-radius: 20px;
+}
+
+.new-chat-btn:hover {
+  background: #00A377;
 }
 
 .btn {
@@ -118,8 +202,8 @@ h1 {
   padding: 10px;
   border: none;
   border-radius: 15px;
-  background: #F5F5F5;
-  color: #000000;
+  background: #000000;
+  color: #F5F5F5;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -138,14 +222,14 @@ h1 {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #2a0000;
+  background: #310000f3;
   color: #ff0000;
   padding: 12px;
   border-radius: 15px;
   margin-bottom: 20px;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  width: 100%;
+  width: 90%;
   text-align: center;
 }
 
@@ -182,24 +266,23 @@ h1 {
   font-size: 16px;
 }
 
-/* Панель пользователей */
 .users-panel {
   width: 0;
   background: #1a1a1a;
   transition: width 0.3s ease;
   position: relative;
-  height: calc(91,6vh); /* Такая же высота, как у .container */
+  height: calc(91.6vh);
   z-index: 2;
   padding: 0;
   border-radius: 22px;
-  margin-left: 20px; /* Отступ между плашкой чатов и панелью пользователей */
-  visibility: hidden; /* Скрываем панель в свёрнутом режиме */
+  margin-left: 20px;
+  visibility: hidden;
 }
 
 .users-panel-open {
   width: 30%;
   padding: 20px;
-  visibility: visible; /* Показываем панель в открытом режиме */
+  visibility: visible;
 }
 
 .users-panel::before {
@@ -209,7 +292,6 @@ h1 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(0, 179, 134, 0.1) 0%, transparent 70%);
   opacity: 0.2;
   z-index: -1;
   border-radius: 20px;
@@ -245,10 +327,10 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: calc(100% - 120px); /* Учитываем заголовок, кнопку "Добавить" и отступы */
-  overflow-y: auto; /* Скроллинг внутри панели пользователей */
+  max-height: calc(100% - 120px);
+  overflow-y: auto;
   padding-right: 10px;
-  padding-top: 40px; /* Добавляем пространство сверху для user-card:hover */
+  padding-top: 40px;
 }
 
 .users-grid::-webkit-scrollbar {
@@ -272,7 +354,7 @@ h1 {
 .user-card {
   display: flex;
   align-items: center;
-  background: #333333;
+  background: #ffffff;
   padding: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -296,14 +378,14 @@ h1 {
 }
 
 .user-info h3 {
-  color: #F5F5F5;
+  color: #000000;
   margin: 0;
   font-size: 14px;
   font-weight: 600;
 }
 
 .user-info p {
-  color: #D3D3D3;
+  color: #3f3f3f;
   margin: 0;
   font-size: 12px;
 }
@@ -313,17 +395,19 @@ h1 {
   opacity: 0.8;
 }
 
-.remove-btn {
+.remove-btn, .add-btn {
   padding: 5px 10px;
   border: none;
   border-radius: 10px;
-  background: #8B0000;
+  background: #000000;
   color: #F5F5F5;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  width: 80px;
+  text-align: center;
 }
 
 .remove-btn:hover {
@@ -332,10 +416,32 @@ h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
-.add-btn {
+.add-btn:hover {
+  background: #00B386;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.manage-btn {
   padding: 10px;
-  font-size: 14px;
+  border: none;
+  border-radius: 15px;
+  background: #000000;
+  color: #F5F5F5;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  text-align: center;
   margin-top: 15px;
+}
+
+.manage-btn:hover {
+  background: #00B386;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .no-users {
@@ -344,7 +450,7 @@ h1 {
   font-size: 14px;
 }
 
-/* Медиа-запрос для узких экранов (телефонов) */
+/* Медиа-запрос для узких экранов */
 @media (max-width: 768px) {
   .page-wrapper {
     flex-direction: column;
@@ -355,20 +461,20 @@ h1 {
   }
 
   .container-shrunk {
-    width: 100%; /* Не сужаем на узких экранах */
+    width: 100%;
   }
 
   .container-hidden {
-    display: none; /* Скрываем чаты, когда открыта панель пользователей */
+    display: none;
   }
 
   .users-panel {
-    margin-left: 0; /* Убираем отступ */
-    height: calc(100vh - 80px); /* Фиксированная высота */
+    margin-left: 0;
+    height: calc(100vh - 80px);
   }
 
   .users-panel-open {
-    width: 100%; /* Панель занимает всю ширину на узких экранах */
+    width: 100%;
     padding: 20px;
     visibility: visible;
   }
