@@ -40,7 +40,6 @@ Thumbs.db
 
 
 target
-src/
 node_modules/
 frontend/.angular/
 frontend/dist
