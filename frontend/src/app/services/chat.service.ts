@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Chat } from '../repositories/chat.model';
-import { UserDTO } from './user.service';
 import { environment } from '../environments/environment';
+import { User } from '../repositories/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +23,9 @@ export class ChatService {
     return this.http.get<Chat>(url);
   }
 
-  getChatUsers(chatId: number): Observable<UserDTO[]> {
+  getChatUsers(chatId: number): Observable<User[]> {
     const url = `${this.apiUrl}/${chatId}/users`;
-    return this.http.get<UserDTO[]>(url);
+    return this.http.get<User[]>(url);
   }
 
   addUserToChat(chatId: number, userId: number): Observable<any> {

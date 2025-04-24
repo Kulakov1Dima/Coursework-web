@@ -1,6 +1,5 @@
 package com.example.chat_app.controller;
 
-import com.example.chat_app.dto.UserRegistrationDTO;
 import com.example.chat_app.dto.UserDTO;
 import com.example.chat_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody UserRegistrationDTO dto) {
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO dto) {
         return userService.registerUser(dto);
     }
 }

@@ -142,7 +142,15 @@
       {{ isAddingUsersMode ? 'Вернуться к пользователям чата' : 'Добавить пользователя' }}
     </button>
 
-    <!-- Если пользователей нет -->
+    <!-- Кнопка выхода -->
+    <button
+      *ngIf="isOwnProfile && !isLoadingUsers && !errorMessageUsers"
+      class="manage-btn logout-btn"
+      (click)="logout()"
+    >
+      Выйти
+    </button>
+
     <div *ngIf="!isLoadingUsers && !errorMessageUsers && ((isAddingUsersMode && !allUsers.length) || (!isAddingUsersMode && !chatUsers.length))" class="no-users">
       <p>{{ isAddingUsersMode ? 'Нет доступных пользователей.' : 'В чате нет пользователей.' }}</p>
     </div>

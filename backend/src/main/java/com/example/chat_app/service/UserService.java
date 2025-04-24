@@ -1,7 +1,6 @@
 package com.example.chat_app.service;
 
 import com.example.chat_app.dto.UserDTO;
-import com.example.chat_app.dto.UserRegistrationDTO;
 import com.example.chat_app.entities.User;
 import com.example.chat_app.mapper.UserMapper;
 import com.example.chat_app.repository.UserRepository;
@@ -27,7 +26,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<UserDTO> registerUser(UserRegistrationDTO userDTO) {
+    public ResponseEntity<UserDTO> registerUser(UserDTO userDTO) {
         if (userRepository.findByLogin(userDTO.getLogin()).isPresent()) {
             return ResponseEntity.status(409).build();
         }

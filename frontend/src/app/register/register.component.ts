@@ -1,27 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserService } from '../services/user.service';
+import { Component } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms'; // Импортируем для реактивных форм
+import { UserService} from '../services/user.service';
 import { Router } from '@angular/router';
-import { BasicAuthInterceptor } from '../interceptors/basic-auth.interceptor';
+import { setCredentials } from '../interceptors/basic-auth.interceptor';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { User } from '../repositories/user.model';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   registerForm: FormGroup;
+  user = { login: '', password: '', nickname: '', name: '', surname: '', photo: '' };
   errorMessage: string | null = null;
   isLoading: boolean = false;
 
   constructor(
+    private fb: FormBuilder,
     private userService: UserService,
-    private authInterceptor: BasicAuthInterceptor,
-    private router: Router,
-    private fb: FormBuilder
+    private router: Router
   ) {
     this.registerForm = this.fb.group({
       login: ['', Validators.required],
@@ -33,41 +35,38 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // Проверяем, если пользователь уже аутентифицирован, перенаправляем на dashboard
-    const savedLogin = localStorage.getItem('login');
-    if (savedLogin) {
-      this.router.navigate(['/dashboard']);
-    }
-  }
-
   onSubmit() {
     if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
+      console.log('Form is invalid');
       return;
     }
 
-    this.isLoading = true;
     this.errorMessage = null;
+    this.isLoading = true;
 
-    const userData = this.registerForm.value;
-    this.userService.register(userData).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        this.authInterceptor.setCredentials(userData.login, userData.password);
-        this.userService.setUser(res.id, res.login);
-        this.router.navigate(['/dashboard']);
+    this.user = this.registerForm.value;
+
+    this.userService.register(this.user).subscribe({
+      next: (registeredUser: User) => {
+        console.log('User registered:', registeredUser);
+        setCredentials(this.user.login, this.user.password);
+        this.userService.setUser(registeredUser.id, registeredUser.login);
+        this.userService.getCurrentUserInfo().subscribe({
+          next: () => {
+            this.isLoading = false;
+            this.router.navigate(['/dashboard']);
+          },
+          error: (err) => {
+            console.error('Error fetching user info after registration:', err);
+            this.isLoading = false;
+            this.router.navigate(['/dashboard']);
+          }
+        });
       },
       error: (err) => {
-        this.isLoading = false;
-        if (err.status === 400) {
-          this.errorMessage = 'Invalid registration data';
-        } else if (err.status === 409) {
-          this.errorMessage = 'Login already exists';
-        } else {
-          this.errorMessage = 'Registration failed';
-        }
+        this.errorMessage = 'Ошибка при регистрации';
         console.error('Registration error:', err);
+        this.isLoading = false;
       }
     });
   }

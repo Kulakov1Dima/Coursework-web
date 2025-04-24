@@ -1,48 +1,57 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn, HttpContextToken, HttpContext } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 
-@Injectable()
-export class BasicAuthInterceptor implements HttpInterceptor {
-  private login: string | null = null;
-  private password: string | null = null;
+export const SKIP_AUTH = new HttpContextToken<boolean>(() => false);
 
-  setCredentials(login: string, password: string) {
-    this.login = login;
-    this.password = password;
-    localStorage.setItem('login', login);
-    localStorage.setItem('password', password);
-    console.log('Credentials set:', login);
+export const basicAuthInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+
+  console.log('Intercepting request:', req.url);
+
+  const skipAuth = req.context.get(SKIP_AUTH);
+  if (skipAuth) {
+    console.log('Skipping Authorization header for:', req.url);
+    return next(req);
   }
 
-  clearCredentials() {
-    this.login = null;
-    this.password = null;
-    localStorage.removeItem('login');
-    localStorage.removeItem('password');
-    console.log('Credentials cleared');
+  const login = localStorage.getItem('login');
+  const password = localStorage.getItem('password');
+
+  if (login && password) {
+    console.log('Loaded credentials from localStorage for user:', login);
+    const authHeader = 'Basic ' + btoa(`${login}:${password}`);
+    console.log('Adding Authorization header for:', req.url, 'with value:', authHeader);
+
+    const authReq = req.clone({
+      headers: req.headers.set('Authorization', authHeader)
+    });
+
+    return next(authReq).pipe(
+      catchError((error) => {
+        if (error.status === 401) {
+          console.log('Unauthorized request, clearing credentials and redirecting to /login');
+          clearCredentials();
+          router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!this.login || !this.password) {
-      const savedLogin = localStorage.getItem('login');
-      const savedPassword = localStorage.getItem('password');
-      if (savedLogin && savedPassword) {
-        this.login = savedLogin;
-        this.password = savedPassword;
-        console.log('Loaded credentials from localStorage:', this.login);
-      }
-    }
+  console.log('No credentials available, proceeding without Authorization header for:', req.url);
+  return next(req);
+};
 
-    if (this.login && this.password && !req.url.includes('/api/auth/register')) {
-      console.log('Adding Authorization header for:', req.url);
-      const authHeader = 'Basic ' + btoa(`${this.login}:${this.password}`);
-      const authReq = req.clone({
-        headers: req.headers.set('Authorization', authHeader)
-      });
-      return next.handle(authReq);
-    }
-    console.log('No Authorization header added for:', req.url);
-    return next.handle(req);
-  }
+export function setCredentials(login: string, password: string) {
+  localStorage.setItem('login', login);
+  localStorage.setItem('password', password);
+  console.log('Credentials set:', login, 'Password:', password);
+}
+
+export function clearCredentials() {
+  localStorage.removeItem('login');
+  localStorage.removeItem('password');
+  console.log('Credentials cleared');
 }

@@ -1,7 +1,6 @@
 package com.example.chat_app.mapper;
 
 import com.example.chat_app.dto.UserDTO;
-import com.example.chat_app.dto.UserRegistrationDTO;
 import com.example.chat_app.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,11 +18,6 @@ public interface UserMapper {
     @Mapping(target = "items", ignore = true)
     @Mapping(target = "comments", ignore = true)
     User toEntity(UserDTO userDTO);
-
-    @Mapping(target = "userInChats", ignore = true)
-    @Mapping(target = "items", ignore = true)
-    @Mapping(target = "comments", ignore = true)
-    User toEntity(UserRegistrationDTO userDTO);
 
     @Mapping(target = "userInChats", ignore = true)
     @Mapping(target = "items", ignore = true)

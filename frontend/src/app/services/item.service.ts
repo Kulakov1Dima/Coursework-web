@@ -7,7 +7,6 @@ import SockJS from 'sockjs-client';
 import { environment } from '../environments/environment';
 import { ItemDTO } from '../repositories/item.model';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -56,16 +55,33 @@ export class ItemService {
     if (this.stompClient) {
       this.disconnectWebSocket();
     }
-
-    const socket = new SockJS(`${environment.wsURL}/ws`);
+  
+    const login = localStorage.getItem('login');
+    const password = localStorage.getItem('password');
+  
+    if (!login || !password) {
+      console.error('No credentials found in localStorage for WebSocket connection');
+      throw new Error('Не удалось подключиться к WebSocket: отсутствуют учетные данные');
+    }
+  
+    const authHeader = 'Basic ' + btoa(`${login}:${password}`);
+    console.log('Connecting to WebSocket with Authorization:', authHeader);
+  
+    const socket = new SockJS(`${environment.wsURL}/ws`, null, {
+      transports: ['websocket']
+    });
+  
     this.stompClient = new Client({
       webSocketFactory: () => socket,
+      connectHeaders: {
+        Authorization: authHeader
+      },
       reconnectDelay: 5000,
       debug: (str) => {
         console.log('STOMP Debug:', str);
       }
     });
-
+  
     this.stompClient.onConnect = () => {
       console.log('Connected to WebSocket');
       this.stompClient!.subscribe(`/topic/chat/${chatId}`, (message: IMessage) => {
@@ -73,11 +89,15 @@ export class ItemService {
         callback(newItem);
       });
     };
-
+  
     this.stompClient.onStompError = (frame) => {
       console.error('Broker reported error:', frame);
     };
-
+  
+    this.stompClient.onDisconnect = () => {
+      console.log('Disconnected from WebSocket');
+    };
+  
     this.stompClient.activate();
   }
 
@@ -85,6 +105,7 @@ export class ItemService {
     if (this.stompClient) {
       this.stompClient.deactivate();
       this.stompClient = null;
+      console.log('WebSocket disconnected');
     }
   }
 }

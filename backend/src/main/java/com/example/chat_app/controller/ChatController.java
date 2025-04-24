@@ -73,7 +73,6 @@ public class ChatController {
     }
 
     // Изменение имени чата
-
     @PutMapping("/{chatId}/name")
     public ResponseEntity<ChatDTO> updateChatName(
             @PathVariable Long chatId,

@@ -444,6 +444,16 @@ h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+.logout-btn {
+  background: #cc0000; /* Красный цвет для кнопки выхода */
+}
+
+.logout-btn:hover {
+  background: #ff3333; /* Светлее при наведении */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
 .no-users {
   text-align: center;
   color: #D3D3D3;

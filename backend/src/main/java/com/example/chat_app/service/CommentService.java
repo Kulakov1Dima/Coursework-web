@@ -57,7 +57,6 @@ public class CommentService {
         Comment savedComment = commentRepository.save(comment);
 
         CommentDTO commentDTO = commentMapper.toDto(savedComment);
-        // Отправляем новый комментарий через WebSocket
         messagingTemplate.convertAndSend("/topic/post/" + postId + "/comments", commentDTO);
 
         return new ResponseEntity<>(commentDTO, HttpStatus.CREATED);

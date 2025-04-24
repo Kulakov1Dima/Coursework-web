@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Chat } from '../repositories/chat.model';
-import { UserDTO } from '../services/user.service';
-import { Observable, switchMap, of, combineLatest, Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Observable, of, Subscription, combineLatest } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
 import { UserService } from '../services/user.service';
 import { ChatService } from '../services/chat.service';
+import { User } from '../repositories/user.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,8 +23,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   viewedUserLogin: string | null = null;
   chats: Chat[] = [];
   selectedChat: Chat | null = null;
-  chatUsers: UserDTO[] = [];
-  allUsers: (UserDTO & { isInChat?: boolean })[] = [];
+  chatUsers: User[] = [];
+  allUsers: (User & { isInChat?: boolean })[] = [];
   isLoading: boolean = false;
   isLoadingUsers: boolean = false;
   errorMessage: string | null = null;
@@ -34,8 +34,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isAddingUsersMode: boolean = false;
   isCreatingChat: boolean = false;
   newChatName: string = '';
-  newChatType: string = 'PUBLIC'; // По умолчанию публичный
-  private routerSubscription: Subscription | null = null;
+  newChatType: string = 'PUBLIC';
+  private routerSubscription: Subscription = new Subscription();
+  private dataSubscription: Subscription = new Subscription();
 
   constructor(
     private userService: UserService,
@@ -51,10 +52,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.closeUsersPanel();
       });
 
-    combineLatest([
-      this.userService.getUserId(),
-      this.userService.getLogin(),
-      this.route.paramMap
+    this.loadData();
+  }
+
+  private loadData() {
+    this.dataSubscription.unsubscribe();
+    this.dataSubscription = new Subscription();
+
+    this.dataSubscription = combineLatest([
+      this.userService.getUserId().pipe(take(1)),
+      this.userService.getLogin().pipe(take(1)),
+      this.route.paramMap.pipe(take(1))
     ])
       .pipe(
         switchMap(([currentUserId, currentUserLogin, params]) => {
@@ -69,17 +77,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
           const loginFromUrl = params.get('login');
           this.viewedUserLogin = loginFromUrl || currentUserLogin;
-
           this.isOwnProfile = this.viewedUserLogin === this.currentUserLogin;
 
-          // Используем getUserByLogin вместо getUserIdByLogin
-          return this.userService.getUserByLogin(this.viewedUserLogin).pipe(
-            switchMap((user: UserDTO) => {
-              this.viewedUserId = user.id;
-              this.isLoading = true;
-              return this.chatService.getChats(user.id);
-            })
-          );
+          if (this.isOwnProfile) {
+            return this.userService.getCurrentUserInfo().pipe(
+              switchMap((user: User) => {
+                this.viewedUserId = user.id;
+                this.isLoading = true;
+                return this.chatService.getChats(user.id);
+              })
+            );
+          } else {
+            return this.userService.getUserByLogin(this.viewedUserLogin!).pipe(
+              switchMap((user: User) => {
+                this.viewedUserId = user.id;
+                this.isLoading = true;
+                return this.chatService.getChats(user.id);
+              })
+            );
+          }
         })
       )
       .subscribe({
@@ -98,6 +114,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           console.error('Chats error:', err);
           this.isLoading = false;
           if (err.status === 401) {
+            this.userService.clearUser();
             this.router.navigate(['/login']);
           }
         }
@@ -298,13 +315,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  logout() {
+    this.userService.clearUser(); // Очищаем данные пользователя
+    this.router.navigate(['/login']); // Перенаправляем на страницу логина
+  }
+
   trackByChatId(index: number, chat: Chat): number {
     return chat.id;
   }
 
   ngOnDestroy() {
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
+    this.routerSubscription.unsubscribe();
+    this.dataSubscription.unsubscribe();
   }
 }
