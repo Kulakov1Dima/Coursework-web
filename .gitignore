@@ -43,3 +43,4 @@ target
 node_modules/
 frontend/.angular/
 frontend/dist
+frontend/node
